@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        if: hashFiles('requirements.txt') != ''
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        if: hashFiles('requirements.txt') != ''
+        run: pip install -r requirements.txt
+
+      - name: Check syntax
+        if: hashFiles('requirements.txt') != ''
+        run: python -m compileall -q -x "(venv|\.venv)" .
